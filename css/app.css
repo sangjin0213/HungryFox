@@ -1,0 +1,482 @@
+/* ==========================================================
+   Base
+   에딧: 밀도 높은 편집 / 작성: 카드 입력 / 열람: 여백 넓은 단일 컬럼
+   ========================================================== */
+body {
+  margin: var(--space-0);
+  background: var(--color-ground);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-base);
+  caret-color: var(--color-brand);
+}
+
+body[data-mode="read"] {
+  background: var(--color-bg);
+}
+
+.app {
+  max-width: var(--canvas-max-width);
+  margin-inline: auto;
+  padding: var(--space-5) var(--space-4);
+}
+
+/* ---------- Header ---------- */
+.app__header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding-block-end: var(--space-4);
+  border-block-end: var(--border-width) solid var(--color-border);
+}
+
+.app__title {
+  margin: var(--space-0);
+  font-size: var(--font-size-title);
+  font-weight: var(--font-weight-semibold);
+}
+
+.app__mode {
+  margin: var(--space-0);
+  padding-block-end: var(--space-1);
+  border-block-end: var(--border-width-strong) solid var(--color-brand);
+  color: var(--color-brand);
+  font-size: var(--font-size-control);
+  font-weight: var(--font-weight-medium);
+}
+
+.app__progress {
+  margin: var(--space-0);
+  margin-inline-start: auto;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-meta);
+  font-weight: var(--font-weight-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+body:not([data-mode="write"]) .app__progress {
+  display: none;
+}
+
+/* ---------- Palette (pill chip row) ---------- */
+.palette {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+  padding-block: var(--space-3);
+  scrollbar-width: thin;
+}
+
+.palette[hidden] {
+  display: none;
+}
+
+.palette__item {
+  flex: none;
+  min-block-size: var(--tap-target);
+  padding: var(--space-button-y) var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--font-size-control);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  transition:
+    background-color var(--motion-fast) var(--ease-standard),
+    border-color var(--motion-fast) var(--ease-standard),
+    color var(--motion-fast) var(--ease-standard);
+}
+
+.palette__item:disabled {
+  opacity: var(--opacity-disabled);
+  background: var(--color-ground);
+  cursor: not-allowed;
+}
+
+.palette__item.is-dragging {
+  border-color: var(--color-brand);
+  background: var(--color-brand-tint);
+  color: var(--color-brand);
+  cursor: grabbing;
+}
+
+/* ---------- Canvas ---------- */
+.canvas {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-block-size: var(--canvas-min-height);
+  padding-block: var(--space-4);
+}
+
+body[data-mode="edit"] .canvas {
+  gap: var(--space-2);
+}
+
+body[data-mode="read"] .canvas {
+  gap: var(--space-5);
+  padding-block: var(--space-5);
+}
+
+.drop-indicator {
+  position: absolute;
+  inset-block-start: var(--space-0);
+  inset-inline: var(--space-0);
+  block-size: var(--drop-indicator-height);
+  border-radius: var(--radius-pill);
+  background: var(--color-brand);
+  pointer-events: none;
+}
+
+/* ---------- Block (card) ---------- */
+.block {
+  position: relative;
+  padding: var(--space-4) var(--space-4) var(--space-4) var(--space-5);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  transition:
+    box-shadow var(--motion-fast) var(--ease-standard),
+    opacity var(--motion-fast) var(--ease-standard);
+}
+
+body[data-mode="edit"] .block {
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
+}
+
+body[data-mode="edit"] .block:hover,
+body[data-mode="write"] .block.is-focused {
+  box-shadow: var(--shadow-hover);
+}
+
+body[data-mode="read"] .block {
+  padding: var(--space-0);
+  border-radius: var(--radius-none);
+  background: var(--color-transparent);
+}
+
+.block__stripe {
+  position: absolute;
+  inset-block: var(--space-0);
+  inset-inline-start: var(--space-0);
+  inline-size: var(--stripe-width);
+  background: var(--color-border);
+  border-start-start-radius: var(--radius-card);
+  border-end-start-radius: var(--radius-card);
+}
+
+body[data-mode="read"] .block__stripe {
+  display: none;
+}
+
+body[data-mode="edit"] .block.is-selected {
+  outline: var(--border-width-strong) solid var(--color-brand);
+}
+
+body[data-mode="edit"] .block.is-selected .block__stripe {
+  background: var(--color-brand);
+}
+
+.block.is-dragging {
+  opacity: var(--opacity-dragging);
+}
+
+.block__label {
+  margin-block-end: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-caption);
+}
+
+/* 에딧·작성 모드: 라벨 줄 높이를 탭 영역에 맞추고, 그립·호버 버튼을 그 줄 오른쪽에 둔다 */
+body[data-mode="edit"] .block__label,
+body[data-mode="write"] .block__label {
+  display: flex;
+  align-items: center;
+  min-block-size: var(--tap-target);
+  margin-block-end: var(--space-1);
+}
+
+.block__grip {
+  position: absolute;
+  inset-block-start: var(--space-3);
+  inset-inline-end: var(--space-3);
+  min-block-size: var(--tap-target);
+  min-inline-size: var(--tap-target);
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--color-transparent);
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: var(--font-size-section);
+  cursor: grab;
+  touch-action: none;
+}
+
+/* 열람 모드 구분선 */
+body[data-mode="read"] .block--divider {
+  border-block-start: var(--border-width) solid var(--color-divider);
+}
+
+body[data-mode="read"] .block--divider .block__label {
+  display: none;
+}
+
+/* ---------- Fields: 열람 ---------- */
+.field + .field {
+  margin-block-start: var(--space-2);
+}
+
+.field p,
+.field ul,
+.field dl,
+.field dd {
+  margin: var(--space-0);
+}
+
+.field--text p {
+  white-space: pre-wrap;
+}
+
+body[data-mode="read"] .field--list ul {
+  padding-inline-start: var(--space-5);
+}
+
+.field--pairList dt {
+  font-weight: var(--font-weight-medium);
+}
+
+.field--pairList dd {
+  margin-block-end: var(--space-2);
+}
+
+.field--rating {
+  color: var(--color-brand);
+}
+
+.field--tags ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-0);
+  list-style: none;
+}
+
+.field--tags li {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-chip);
+  background: var(--color-ground);
+  color: var(--color-text);
+  font-size: var(--font-size-caption);
+}
+
+.field--url a {
+  color: var(--color-brand);
+  font-weight: var(--font-weight-medium);
+}
+
+/* 블록 타입별 위계 */
+body[data-mode="read"] .block--heading .field p,
+.block--heading .field textarea {
+  font-size: var(--font-size-section);
+  font-weight: var(--font-weight-semibold);
+}
+
+body[data-mode="read"] .block--book [data-field-key="title"] p {
+  font-size: var(--font-size-section);
+  font-weight: var(--font-weight-semibold);
+}
+
+body[data-mode="read"] .block--book [data-field-key="author"] p,
+body[data-mode="read"] .block--quote [data-field-key="page"] p {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-meta);
+}
+
+/* ---------- Fields: 작성 / 에딧 입력 ---------- */
+.field textarea,
+.field input {
+  box-sizing: border-box;
+  inline-size: var(--size-full);
+  padding: var(--space-2) var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-field);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--font-size-control);
+  transition: border-color var(--motion-fast) var(--ease-standard);
+}
+
+.field textarea {
+  display: block;
+  resize: none;
+  overflow: hidden;
+}
+
+.field textarea::placeholder,
+.field input::placeholder {
+  color: var(--color-text-hint);
+}
+
+.field textarea:focus,
+.field input:focus {
+  border-color: var(--color-text-hint);
+}
+
+/* 에딧 모드: readonly 스켈레톤 */
+body[data-mode="edit"] .field textarea,
+body[data-mode="edit"] .field input {
+  border-color: var(--color-transparent);
+  background: var(--color-ground);
+  cursor: default;
+}
+
+.field button {
+  min-block-size: var(--tap-target);
+  min-inline-size: var(--tap-target);
+  padding: var(--space-0) var(--space-3);
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--color-transparent);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--font-size-control);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: color var(--motion-fast) var(--ease-standard);
+}
+
+body:not([data-mode="read"]) .field--list ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-block-end: var(--space-1);
+  padding: var(--space-0);
+  list-style: none;
+}
+
+body:not([data-mode="read"]) .field--list li,
+.field--pairList > div {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.field--pairList > div {
+  margin-block-end: var(--space-1);
+}
+
+.field--rating [role="group"] {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.field--rating button {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-section);
+}
+
+.field--rating button[aria-pressed="true"],
+.field--rating button:has(~ button[aria-pressed="true"]) {
+  color: var(--color-brand);
+}
+
+.field--tags li button {
+  min-block-size: var(--size-auto);
+  min-inline-size: var(--size-auto);
+  margin-inline-start: var(--space-1);
+  padding: var(--space-0);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-caption);
+}
+
+.field--tags ul + input {
+  margin-block-start: var(--space-2);
+}
+
+/* ---------- Block actions (작성 모드 호버 버튼) ---------- */
+.block__actions {
+  position: absolute;
+  inset-block-start: var(--space-4);
+  inset-inline-end: var(--space-4);
+  display: flex;
+  gap: var(--space-1);
+}
+
+.block__actions button {
+  min-block-size: var(--tap-target);
+  min-inline-size: var(--tap-target);
+  padding: var(--space-0) var(--space-3);
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--color-transparent);
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: var(--font-size-control);
+  cursor: pointer;
+  transition: color var(--motion-fast) var(--ease-standard);
+}
+
+.block__actions button:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+}
+
+.block__actions [data-action="block-remove"] {
+  color: var(--color-error);
+}
+
+body[data-mode="write"] .block__actions {
+  visibility: hidden;
+}
+
+body[data-mode="write"] .block:hover .block__actions,
+body[data-mode="write"] .block:focus-within .block__actions {
+  visibility: visible;
+}
+
+/* ---------- Toast ---------- */
+.toast {
+  position: fixed;
+  z-index: var(--z-toast);
+  inset-inline: var(--space-0);
+  inset-block-end: var(--space-5);
+  inline-size: fit-content;
+  margin-inline: auto;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-pill);
+  background: var(--color-text);
+  box-shadow: var(--shadow-floating);
+  color: var(--color-on-dark);
+  font-size: var(--font-size-control);
+  font-weight: var(--font-weight-medium);
+}
+
+.toast:empty {
+  display: none;
+}
+
+/* ---------- Accessibility ---------- */
+:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}

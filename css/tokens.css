@@ -1,0 +1,82 @@
+/* design.md (Xiaohongshu Reference Design System) 기반 토큰 */
+:root {
+  /* Brand — 브랜드, 주요 동작, 활성/선택 상태에만 사용 */
+  --color-brand: #FF2442;
+  --color-brand-pressed: #E01F3D;
+  --color-brand-tint: #FFECEF;
+
+  /* Surface */
+  --color-bg: #FFFFFF;
+  --color-ground: #F5F5F5;
+  --color-surface: #FFFFFF;
+  --color-transparent: transparent;
+
+  /* Text */
+  --color-text: #333333;
+  --color-text-muted: #999999;
+  --color-text-hint: #CCCCCC;
+  --color-on-dark: #FFFFFF;
+
+  /* Border & Divider */
+  --color-border: #EEEEEE;
+  --color-divider: #F0F0F0;
+
+  /* State */
+  --color-error: #FF4D4F;
+  --color-focus: #333333;
+
+  /* Depth */
+  --shadow-hover: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --shadow-floating: 0 -2px 16px rgba(0, 0, 0, 0.1);
+  --z-toast: 100;
+
+  /* Typography */
+  --font-body: -apple-system, BlinkMacSystemFont, "PingFang SC", "Source Han Sans SC", "思源黑体", "Microsoft YaHei", "微软雅黑", "Helvetica Neue", Arial, sans-serif;
+  --font-size-caption: 12px;
+  --font-size-meta: 13px;
+  --font-size-control: 14px;
+  --font-size-body: 16px;
+  --font-size-section: 18px;
+  --font-size-title: 20px;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --line-height-base: 1.6;
+
+  /* Spacing */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-button-y: 6px;
+
+  /* Shape */
+  --radius-card: 8px;
+  --radius-field: 8px;
+  --radius-chip: 16px;
+  --radius-pill: 20px;
+  --radius-none: 0;
+  --border-width: 1px;
+  --border-width-strong: 2px;
+  --stripe-width: 4px;
+  --drop-indicator-height: 2px;
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+
+  /* Size */
+  --tap-target: 44px;
+  --canvas-max-width: 720px;
+  --canvas-min-height: 8rem;
+  --size-full: 100%;
+  --size-auto: auto;
+
+  /* State values */
+  --opacity-disabled: 0.4;
+  --opacity-dragging: 0.5;
+
+  /* Motion */
+  --motion-fast: 200ms;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+}
